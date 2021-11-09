@@ -1,0 +1,88 @@
+﻿@model RepositorioGitHub.Dominio.ActionResult<RepositorioGitHub.Dominio.FavoriteViewModel>
+
+@{
+    ViewBag.Title = "Favorite";
+}
+
+<h2>Favoritos</h2>
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Result.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Result.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Result.Language)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Result.UpdateLast)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Result.Owner)
+        </th>
+        <th></th>
+    </tr>
+
+    @if (Model?.Results != null)
+    {
+        foreach (var item in Model.Results)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Language)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateLast)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Owner)
+                </td>
+                <td>
+                    <button id="@item.Id" class="btn btn-danger btn-favorito"> Remover Favorito </button>
+                </td>
+            </tr>
+        }
+    }
+
+</table>
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+<script src="~/Scripts/toastr.js"></script>
+<script>
+    debugger;
+    $(function () {
+        $(document).on('click', '.btn-favorito', function (e) {
+            e.preventDefault;
+            $.ajax(
+                {
+                    type: "GET",
+                    async: true,
+                    url: "@Url.Action("RemoveFavorite", "Home")",
+                    data: { favoriteId: e.target.id },
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (response.Data.IsValid) {
+                            toastr.success(response.Data.Message);
+                            e.target.closest("tr").remove();
+                        } else {
+                            toastr.warning(response.Data.Message);
+                        }
+                    },
+                    error: function (xhr) {
+
+                    }
+                });
+
+        });
+    });
+</script>
